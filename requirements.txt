@@ -1,0 +1,12 @@
+google-genai
+opencv-contrib-python
+numpy
+Pillow
+edge-tts
+pvporcupine
+vosk
+sounddevice
+pygame
+pyyaml
+python-dotenv
+rapidfuzz

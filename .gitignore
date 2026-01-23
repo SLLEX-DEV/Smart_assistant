@@ -1,0 +1,13 @@
+.env
+venv/
+.venv/
+env/
+ENV/
+.idea/
+*.iml
+**/__pycache__/
+*.py[cod]
+*$py.class
+assets/models/*
+.DS_Store
+Thunbs.db
