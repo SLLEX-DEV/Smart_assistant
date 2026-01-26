@@ -3,7 +3,7 @@ from google import genai
 import os
 from dotenv import load_dotenv
 from google.genai import  types
-
+import threading
 
 class AiEngine():
 
@@ -26,7 +26,16 @@ class AiEngine():
             )
         )
         return response.text
-
+    def info(self,promt):
+        response = self.client.models.generate_content(
+            model=self.model_name,
+            contents=promt,
+            config = types.GenerateContentConfig(
+                system_instruction = 'ты помошник для незрячих,отвечай быстро и кратко',
+                temperature = 0.3
+            )
+            )
+        return response.text
 
 
 
