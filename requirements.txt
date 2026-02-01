@@ -10,3 +10,4 @@ pygame
 pyyaml
 python-dotenv
 rapidfuzz
+Sherpa-ONNX
