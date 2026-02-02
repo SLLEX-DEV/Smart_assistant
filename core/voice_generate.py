@@ -1,7 +1,7 @@
 import sherpa_onnx as sh
 
 
-class TTS:
+class tts:
     def __init__(self):
         vits = sh.OfflineTtsVitsModelConfig(
             model=r'smart_assistant\assets\models\sherpaVoice\voice.onnx',

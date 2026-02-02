@@ -3,18 +3,19 @@ import queue
 
 
 
+
 class AudioManager:
-    def __init__(self,devise_number = 1):
+    def __init__(self,devise_number):
         self.devise_number = devise_number
-        sd.default.device(devise_number)
-        self.frameQueue = queue.Queue()
+        sd.default.device = devise_number
         self.stream = None
+        self.frame_queue = queue.Queue()
     def audioCycle(self,indata,frame,time,status):
         if  status:
             print('audioError')
-        self.frameQueue.put(indata.copy())
+        self.frame_queue.put(indata.copy())
     def start(self):
-            self.stream = sd.RawInputStream(
+            self.stream = sd.InputStream(
                samplerate=16000,
                blocksize=512,
                device=self.devise_number,
