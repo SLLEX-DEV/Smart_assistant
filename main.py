@@ -5,17 +5,35 @@ from core.vision import CameraController
 from core.voice import Voice_listener
 from core.voice_generate import tts
 import threading
+import  time
 
+#инит
+WW = wakeWord()
+AM = AudioManager(devise_number=1)
+camera = CameraController()
+Vl  = Voice_listener()
+tts = tts()
 
-wk = wakeWord()
-au = AudioManager(devise_number=1)
-thread1 = threading.Thread(target=au.start,daemon=True)
+# потоки
+thread1 = threading.Thread(target=AM.start,daemon=True)
 thread1.start()
-
+part = 'waiting'
 while True:
-    abi = au.frame_queue.get()
-    abi2 =abi.flatten()
-    print(wk.frazeDetect(abi2))
+    audio = AM.frame_queue.get()
+    AM.frame_queue.task_done()
+    convertedAudio = audio.flatten()
+    match part:
+        case 'waiting':
+            if WW.frazeDetect(convertedAudio) == 0:
+                part = 'listening'
+        case 'listening':
+            fraze = Vl.Getfraze(convertedAudio.tobytes())
+            result_dict = jsonTOdict(fraze)
+            text = result_dict.get('text','')
+            print('1')
+            print(text)
+            part = 'waiting'
+
 
 
 

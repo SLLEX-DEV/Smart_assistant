@@ -4,10 +4,10 @@ import sherpa_onnx as sh
 class tts:
     def __init__(self):
         vits = sh.OfflineTtsVitsModelConfig(
-            model=r'smart_assistant\assets\models\sherpaVoice\voice.onnx',
+            model=r'assets\models\sherpaVoice\voice.onnx',
             lexicon='',
-            tokens=r'smart_assistant\assets\models\sherpaVoice\tokens.txt',
-            data_dir=r'smart_assistant\assets\models\sherpaVoice\espeak-ng-data',
+            tokens=r'assets\models\sherpaVoice\tokens.txt',
+            data_dir=r'assets\models\sherpaVoice\espeak-ng-data',
             noise_scale=0.667,
             noise_scale_w=0.9,
             length_scale=1.2
