@@ -1,8 +1,11 @@
-from random import sample
+
 import vosk
 from vosk import Model, KaldiRecognizer
-import  sounddevice as sd
-import threading
+
+
+import json
+def json_todict(st):
+    return json.loads(st)
 
 
 
@@ -14,9 +17,11 @@ class Voice_listener:
         self.modelPath = vosk.Model(model_path=model)
         self.rec = vosk.KaldiRecognizer(self.modelPath,16000)
     def Getfraze(self,sounds):
-         if not self.rec.AcceptWaveform(sounds):
+         if self.rec.AcceptWaveform(sounds):
             result =self.rec.Result()
-            return result
+            jsRES = json_todict(result)
+            text = jsRES.get('text','')
+            return text
 
 
 

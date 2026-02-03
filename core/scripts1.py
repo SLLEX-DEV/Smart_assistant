@@ -7,8 +7,6 @@ from rapidfuzz import process,fuzz,utils
 def cv2_to_ai(camera_frame):
     camera_frame = cv2.cvtColor(camera_frame, cv2.COLOR_BGR2RGB)
     return Image.fromarray(camera_frame)
-def jsonTOdict(str):
-    return json.loads(str)
 def char_compare(user_input,commands):
     result = process.extractOne(
         user_input,

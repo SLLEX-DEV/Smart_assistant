@@ -1,6 +1,6 @@
 from core.wake_word import wakeWord
 from core.audio_manager import AudioManager
-from core.scripts1 import cv2_to_ai,jsonTOdict,char_compare
+from core.scripts1 import cv2_to_ai,char_compare
 from core.vision import CameraController
 from core.voice import Voice_listener
 from core.voice_generate import tts
@@ -21,18 +21,18 @@ part = 'waiting'
 while True:
     audio = AM.frame_queue.get()
     AM.frame_queue.task_done()
-    convertedAudio = audio.flatten()
     match part:
         case 'waiting':
-            if WW.frazeDetect(convertedAudio) == 0:
-                part = 'listening'
+                if WW.frazeDetect(audio) == 0:
+                    print('hear')
+                    part = 'listening'
         case 'listening':
-            fraze = Vl.Getfraze(convertedAudio.tobytes())
-            result_dict = jsonTOdict(fraze)
-            text = result_dict.get('text','')
-            print('1')
-            print(text)
-            part = 'waiting'
+                text = Vl.Getfraze(audio.tobytes())
+                if text:
+                    print(text)
+                    part = ''
+
+
 
 
 
