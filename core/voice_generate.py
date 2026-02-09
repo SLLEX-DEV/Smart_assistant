@@ -1,5 +1,6 @@
 import sherpa_onnx as sh
-
+from numpy.random import sample
+import  sounddevice as sd
 
 class tts:
     def __init__(self):
@@ -23,4 +24,3 @@ class tts:
         self.tts = sh.OfflineTts(config=tts_config)
     def generateAudio(self, text):
         self.audio = self.tts.generate(text)
-

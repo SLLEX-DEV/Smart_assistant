@@ -4,6 +4,7 @@ import numpy as np
 import json
 from rapidfuzz import process,fuzz,utils
 
+
 def cv2_to_ai(camera_frame):
     camera_frame = cv2.cvtColor(camera_frame, cv2.COLOR_BGR2RGB)
     return Image.fromarray(camera_frame)

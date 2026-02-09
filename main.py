@@ -8,7 +8,7 @@ from core.ai_engine import AiEngine
 import threading
 import  time
 import multiprocessing as mp
-
+import sounddevice as sd
 #инит
 WW = wakeWord()
 AM = AudioManager(devise_number=1)
@@ -41,7 +41,11 @@ while True:
             answer = AI.info(text)
             if answer:
                 print(answer)
-                part = 'waiting'
+                part = 'voiceGen'
+        case 'voiceGen':
+           tts.generateAudio(answer)
+
+
 
 
 
