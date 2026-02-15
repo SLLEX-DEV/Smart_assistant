@@ -6,7 +6,30 @@ from core.voice import Voice_listener
 from core.voice_generate import tts
 from core.ai_engine import AiEngine
 import threading
-import multiprocessing as mp
+from multiprocessing import Process,Pipe
+from collections import deque
+
+def sttManager(pipe):
+    audioDeq =  deque(maxlen=60)
+    ww = wakeWord()
+    audioM = AudioManager(audioDeq)
+    VoiceL = Voice_listener()
+    stat = 'waiting'
+    audioM.start()
+
+    while True:
+        if len(audioDeq) > 0:
+            char = audioDeq.popleft()
+
+        match stat:
+            case 'waiting':
+                if ww.frazeDetect(char) == 0:
+                    stat = "listening"
+            case 'listening':
+                fraze = VoiceL.Getfraze(char)
+                if fraze:
+                     pipe.send(fraze)
+                     stat = "waiting"
 
 
 
@@ -14,7 +37,14 @@ import multiprocessing as mp
 
 
 
+def main():
+    voskConn1,voskConn2 = Pipe()
 
+    processSttManager = Process.Process(target=sttManager, args=voskConn2)
 
+    processSttManager.start()
 
+def mainloop():
+
+    while True:
 

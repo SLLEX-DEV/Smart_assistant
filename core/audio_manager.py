@@ -8,14 +8,16 @@ import threading as thread
 
 
 class AudioManager:
-    def __init__(self,devise_number):
+    def __init__(self,devise_number,deque):
         self.devise_number = devise_number
         sd.default.device = devise_number
+        self.deque = deque
         self.stream = None
     def audioCycle(self,indata,frame,time,status):
         if  status:
             print('audioError')
-
+        chunk = indata.reshape(-1).copy()
+        self.deque.append(chunk)
     def cycle(self):
             self.stream = sd.InputStream(
                samplerate=16000,
