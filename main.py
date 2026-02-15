@@ -4,10 +4,19 @@ from core.vision import CameraController
 from core.voice import Voice_listener
 from core.voice_generate import tts
 from core.ai_engine import AiEngine
-import threading
+from core.audioPlayer import audioPlayer
 from multiprocessing import Process,Pipe
 from collections import deque
-
+import queue
+def ttsManager(pipe):
+    sherpa = tts()
+    audioPlay = audioPlayer()
+    sherpa.initializate()
+    audioQueue = queue.Queue
+    while True:
+        if pipe.poll(1):
+            fraze = pipe.recv()
+            sherpa.generateAudio(fraze)
 def cameraManager(pipe):
     cameraC = CameraController()
     while True:

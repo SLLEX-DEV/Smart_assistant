@@ -1,14 +1,19 @@
 import sherpa_onnx as sh
 from numpy.random import sample
+import queue
 
 
 class tts:
     def __init__(self):
+            self.model_path=r'assets\models\sherpaVoice\voice.onnx'
+            self.tokens_path=r'assets\models\sherpaVoice\tokens.txt'
+            self.data_dir_path=r'assets\models\sherpaVoice\espeak-ng-data'
+    def initializate(self):
         vits = sh.OfflineTtsVitsModelConfig(
-            model=r'assets\models\sherpaVoice\voice.onnx',
+            model=self.model_path,
             lexicon='',
-            tokens=r'assets\models\sherpaVoice\tokens.txt',
-            data_dir=r'assets\models\sherpaVoice\espeak-ng-data',
+            tokens=self.tokens_path,
+            data_dir=self.data_dir_path,
             noise_scale=0.667,
             noise_scale_w=0.9,
             length_scale=1.2
@@ -21,7 +26,8 @@ class tts:
         tts_config = sh.OfflineTtsConfig(
             model=config
         )
+
         self.tts = sh.OfflineTts(config=tts_config)
-    def generateAudio(self, text):
+    def generateAudio(self, text,queue):
         self.audio = self.tts.generate(text)
         return self.audio
