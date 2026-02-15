@@ -1,6 +1,8 @@
+import threading
+from itertools import cycle
 import sounddevice as sd
-import queue
-
+from collections import deque
+import threading as thread
 
 
 
@@ -10,12 +12,11 @@ class AudioManager:
         self.devise_number = devise_number
         sd.default.device = devise_number
         self.stream = None
-        self.frame_queue = queue.Queue()
     def audioCycle(self,indata,frame,time,status):
         if  status:
             print('audioError')
-        self.frame_queue.put(indata.reshape(-1).copy())
-    def start(self):
+
+    def cycle(self):
             self.stream = sd.InputStream(
                samplerate=16000,
                blocksize=512,
@@ -26,7 +27,9 @@ class AudioManager:
                callback=self.audioCycle)
 
             self.stream.start()
-
+    def start(self):
+        thredAudio = threading.Thread(target=cycle,daemon=True)
+        thredAudio.start()
     def stop(self):
         if self.stream:
             self.stream.stop()

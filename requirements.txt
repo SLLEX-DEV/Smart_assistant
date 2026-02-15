@@ -10,3 +10,4 @@ pyyaml
 python-dotenv
 rapidfuzz
 Sherpa-ONNX
+pipe
