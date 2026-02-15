@@ -1,5 +1,4 @@
 import sherpa_onnx as sh
-from numpy.random import sample
 import queue
 
 
@@ -29,5 +28,5 @@ class tts:
 
         self.tts = sh.OfflineTts(config=tts_config)
     def generateAudio(self, text,queue):
-        self.audio = self.tts.generate(text)
-        return self.audio
+        audio = self.tts.generate(text)
+        queue.put(audio)

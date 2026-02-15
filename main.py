@@ -11,12 +11,15 @@ import queue
 def ttsManager(pipe):
     sherpa = tts()
     audioPlay = audioPlayer()
+
     sherpa.initializate()
-    audioQueue = queue.Queue
+    audioQueue = queue.Queue()
+
+    audioPlay.loopStart(audioQueue)
     while True:
-        if pipe.poll(1):
+        if pipe.poll(None):
             fraze = pipe.recv()
-            sherpa.generateAudio(fraze)
+            sherpa.generateAudio(fraze,audioQueue)
 def cameraManager(pipe):
     cameraC = CameraController()
     while True:
@@ -56,12 +59,15 @@ def sttManager(pipe):
 def main():
     voskConn1,voskConn2 = Pipe()
     cameraConn1,cameraConn2 = Pipe()
+    SGconn1,SGconn2 = Pipe()
 
     processSttManager = Process(target = sttManager, args = voskConn2)
     processCameraManager = Process(target = cameraManager, args = cameraConn2)
+    processGemini2Sherpa = Process(target=ttsManager,args=SGconn2)
 
     processSttManager.start()
     processCameraManager.start()
+    processGemini2Sherpa.start()
 
 async def mainloop(cameraPipe,voskPipe,audioPipe):
     gem = AiEngine()
