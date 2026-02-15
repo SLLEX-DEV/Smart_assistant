@@ -3,6 +3,7 @@ import threading
 import time
 
 
+
 class CameraController:
     def __init__(self, camera_number=0):
         self.camera_number = camera_number
@@ -31,7 +32,13 @@ class CameraController:
                 self.stopped = True
 
     def get_frame(self):
-        return self.frame
+         if self.frame is None:
+             return None
+         frameC = self.frame.copy()
+         stat,Convframe = cv2.imencode(',jpg',frameC,[int(cv2.IMWRITE_JPEG_QUALITY),90])
+         if stat:
+            return self.Convframe
+         return None
 
     def stop(self):
         self.stopped = True
