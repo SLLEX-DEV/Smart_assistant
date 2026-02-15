@@ -7,7 +7,7 @@ class audioPlayer():
             sd.default.device = devise_num
     def audioPlay(self,audio):
         if audio:
-            sd.play(self.audio.samples,samplerate=self.audio.sample_rate)
+            sd.play(audio.samples,samplerate=audio.sample_rate)
             sd.wait()
     def errorStop(self):
         sd.stop()
