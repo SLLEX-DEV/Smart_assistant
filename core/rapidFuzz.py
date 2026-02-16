@@ -9,7 +9,6 @@ class Wordcompair():
             "глянь",
             'изображение',
             'дай описание',
-            'как выглядит'
         ]
         self.std_cmd = {
             'сколько времени': 'get_time',
@@ -25,7 +24,7 @@ class Wordcompair():
             ' '.join(words[:2]),
             self.vision_cmd,
             scorer=fuzz.WRatio,
-            score_cutoff=80
+            score_cutoff=85
         )
         if vision_match:
             return text,'ImGemini'

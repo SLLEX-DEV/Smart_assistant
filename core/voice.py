@@ -14,8 +14,9 @@ class Voice_listener:
         self.devise_num = devise_num
         self.model = model
         self.modelPath = Model(model_path=self.model)
-    def Getfraze(self,sounds):
+    def initialization(self):
         self.rec = KaldiRecognizer(self.modelPath, 16000)
+    def Getfraze(self,sounds):
         if self.rec.AcceptWaveform(sounds):
             result =self.rec.Result()
             jsRES = json_todict(result)

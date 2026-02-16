@@ -13,30 +13,37 @@ from core.rapidFuzz import Wordcompair
 import queue
 def ttsManager(pipe):
     sherpa = tts()
-    audioPlay = audioPlayer()
+    audioPlay = audioPlayer(4)
 
     sherpa.initializate()
     audioQueue = queue.Queue()
 
     audioPlay.loopStart(audioQueue)
     while True:
-        if pipe.poll(None):
+        if pipe.poll(0.1):
             fraze = pipe.recv()
             sherpa.generateAudio(fraze,audioQueue)
 def cameraManager(pipe):
     cameraC = CameraController()
+    cameraC.start()
     while True:
         if pipe.poll(1):
             task = pipe.recv()
             if task == 'ImGemini':
-                pipe.send(cameraC.get_frame())
+                try:
+                    pipe.send(cameraC.get_frame())
+                except Exception as e:
+                    print(e)
 
 def sttManager(pipe):
     audioDeq =  deque(maxlen=60)
     ww = wakeWord()
-    audioM = AudioManager(1,audioDeq)
+    audioM = AudioManager(2,audioDeq)
     VoiceL = Voice_listener()
+    VoiceL.initialization()
+
     stat = 'waiting'
+
     audioM.start()
 
     while True:
@@ -46,9 +53,10 @@ def sttManager(pipe):
             match stat:
                 case 'waiting':
                     if ww.frazeDetect(char) == 0:
+                        print('1')
                         stat = "listening"
-                case 'listening':
-                    fraze = VoiceL.Getfraze(char)
+                case "listening":
+                    fraze = VoiceL.Getfraze(char.tobytes())
                     if fraze:
                         pipe.send(fraze)
                         stat = "waiting"
@@ -78,13 +86,16 @@ async def mainloop(cameraPipe,voskPipe,audioPipe):
     wordC = Wordcompair()
     task = ''
     while True:
-        if voskPipe.poll(None):
+        if voskPipe.poll(0.1):
             text = voskPipe.recv()
             promt,task = wordC.wordAnalize(text)
+            print(task)
+            print(promt)
             match task:
                 case 'local':
                     print(promt)
                 case 'gemini':
+                    print('2')
                     res = gem.image_info(promt)
                     for chank in res:
                         audioPipe.send(chank)

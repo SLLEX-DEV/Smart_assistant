@@ -28,7 +28,7 @@ class AiEngine():
             model= self.model_name,
             contents = content,
             config = types.GenerateContentConfig(
-            system_instruction="ты помошник для незрячих;",
+            system_instruction="ты помошник для незрячих;отвечай не очень обьемно!",
             temperature = 0.3,
 
             )
