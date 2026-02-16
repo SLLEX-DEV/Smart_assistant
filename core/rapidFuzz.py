@@ -1,8 +1,9 @@
-from rapidfuzz import process,utils,fuzz
-
+from rapidfuzz import process, fuzz
+import scripts1
 
 class Wordcompair():
     def __init__(self):
+        self.module = scripts1
         self.vision_cmd = [
             'опиши',
             "глянь",
@@ -36,7 +37,9 @@ class Wordcompair():
                 score_cutoff=75
             )
             if command_match:
-                return self.std_cmd[command_match[0]],'local'
+                cmd = self.std_cmd[command_match[0]].strip()
+                func = getattr(self.module,cmd,None)
+                return func(),'local'
             else:
                 return text, 'gemini'
 

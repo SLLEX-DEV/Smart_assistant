@@ -1,3 +1,5 @@
+import asyncio
+
 from core.wake_word import wakeWord
 from core.audio_manager import AudioManager
 from core.vision import CameraController
@@ -7,6 +9,7 @@ from core.ai_engine import AiEngine
 from core.audioPlayer import audioPlayer
 from multiprocessing import Process,Pipe
 from collections import deque
+from core.rapidFuzz import Wordcompair
 import queue
 def ttsManager(pipe):
     sherpa = tts()
@@ -31,7 +34,7 @@ def cameraManager(pipe):
 def sttManager(pipe):
     audioDeq =  deque(maxlen=60)
     ww = wakeWord()
-    audioM = AudioManager(audioDeq)
+    audioM = AudioManager(1,audioDeq)
     VoiceL = Voice_listener()
     stat = 'waiting'
     audioM.start()
@@ -61,15 +64,41 @@ def main():
     cameraConn1,cameraConn2 = Pipe()
     SGconn1,SGconn2 = Pipe()
 
-    processSttManager = Process(target = sttManager, args = voskConn2)
-    processCameraManager = Process(target = cameraManager, args = cameraConn2)
-    processGemini2Sherpa = Process(target=ttsManager,args=SGconn2)
+    processSttManager = Process(target = sttManager, args = (voskConn2,))
+    processCameraManager = Process(target = cameraManager, args = (cameraConn2,))
+    processGemini2Sherpa = Process(target=ttsManager,args=(SGconn2,))
 
     processSttManager.start()
     processCameraManager.start()
     processGemini2Sherpa.start()
+    asyncio.run(mainloop(cameraConn1,voskConn1,SGconn1))
 
 async def mainloop(cameraPipe,voskPipe,audioPipe):
     gem = AiEngine()
+    wordC = Wordcompair()
+    task = ''
+    while True:
+        if voskPipe.poll(None):
+            text = voskPipe.recv()
+            promt,task = wordC.wordAnalize(text)
+            match task:
+                case 'local':
+                    print(promt)
+                case 'gemini':
+                    res = gem.image_info(promt)
+                    for chank in res:
+                        audioPipe.send(chank)
+                case 'ImGemini':
+                    cameraPipe.send('ImGemini')
+                    if cameraPipe.poll(None):
+                        image = cameraPipe.recv()
+                        res = gem.image_info(promt,image)
+                        for chank in res:
+                            audioPipe.send(chank)
+if __name__ == '__main__':
+    main()
+
+
+
 
 

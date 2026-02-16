@@ -30,8 +30,8 @@ class AudioManager:
 
             self.stream.start()
     def start(self):
-        thredAudio = threading.Thread(target=cycle,daemon=True)
-        thredAudio.start()
+        self.thredAudio = threading.Thread(target=self.cycle,daemon=True)
+        self.thredAudio.start()
     def stop(self):
         if self.stream:
             self.stream.stop()
