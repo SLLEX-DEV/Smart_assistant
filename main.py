@@ -79,7 +79,19 @@ def main():
     processSttManager.start()
     processCameraManager.start()
     processGemini2Sherpa.start()
-    asyncio.run(mainloop(cameraConn1,voskConn1,SGconn1))
+    try:
+        asyncio.run(mainloop(cameraConn1, voskConn1, SGconn1))
+    except KeyboardInterrupt:
+        print("\nЗавершение работы...")
+    finally:
+
+        processSttManager.terminate()
+        processCameraManager.terminate()
+        processGemini2Sherpa.terminate()
+
+        processSttManager.join()
+        processCameraManager.join()
+        processGemini2Sherpa.join()
 
 async def mainloop(cameraPipe,voskPipe,audioPipe):
     gem = AiEngine()
@@ -101,11 +113,14 @@ async def mainloop(cameraPipe,voskPipe,audioPipe):
                         audioPipe.send(chank)
                 case 'ImGemini':
                     cameraPipe.send('ImGemini')
-                    if cameraPipe.poll(None):
+                    if cameraPipe.poll(0.1):
                         image = cameraPipe.recv()
                         res = gem.image_info(promt,image)
                         for chank in res:
+                            print(chank)
                             audioPipe.send(chank)
+                case _:
+                    break
 if __name__ == '__main__':
     main()
 

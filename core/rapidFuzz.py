@@ -6,9 +6,9 @@ class Wordcompair():
         self.module = scripts1
         self.vision_cmd = [
             'опиши',
-            "глянь",
+            "посмотри",
             'изображение',
-            'дай описание',
+            ' описание',
         ]
         self.std_cmd = {
             'сколько времени': 'get_time',

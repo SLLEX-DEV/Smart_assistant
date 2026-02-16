@@ -35,9 +35,9 @@ class CameraController:
          if self.frame is None:
              return None
          frameC = self.frame.copy()
-         stat,Convframe = cv2.imencode(',jpg',frameC,[int(cv2.IMWRITE_JPEG_QUALITY),90])
+         stat,Convframe = cv2.imencode('.jpg',frameC,[int(cv2.IMWRITE_JPEG_QUALITY),90])
          if stat:
-            return self.Convframe
+            return Convframe.tobytes()
          return None
 
     def stop(self):

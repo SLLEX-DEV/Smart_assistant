@@ -15,7 +15,7 @@ class tts:
             data_dir=self.data_dir_path,
             noise_scale=0.667,
             noise_scale_w=0.9,
-            length_scale=1.2
+            length_scale=1.4
         )
         config = sh.OfflineTtsModelConfig(
             vits=vits,
