@@ -19,7 +19,7 @@ class tts:
         )
         config = sh.OfflineTtsModelConfig(
             vits=vits,
-            num_threads=2,
+            num_threads=3,
             debug=False
         )
         tts_config = sh.OfflineTtsConfig(
