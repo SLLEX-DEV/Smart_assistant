@@ -13,7 +13,7 @@ from core.rapidFuzz import Wordcompair
 import queue
 def ttsManager(pipe):
     sherpa = tts()
-    audioPlay = audioPlayer(4)
+    audioPlay = audioPlayer(3)
 
     sherpa.initializate()
     audioQueue = queue.Queue()
@@ -38,7 +38,7 @@ def cameraManager(pipe):
 def sttManager(pipe):
     audioDeq =  deque(maxlen=60)
     ww = wakeWord()
-    audioM = AudioManager(2,audioDeq)
+    audioM = AudioManager(1 ,audioDeq)
     VoiceL = Voice_listener()
     VoiceL.initialization()
 
@@ -109,14 +109,14 @@ async def mainloop(cameraPipe,voskPipe,audioPipe):
                 case 'gemini':
                     print('2')
                     res = gem.image_info(promt)
-                    for chank in res:
+                    async for chank in res:
                         audioPipe.send(chank)
                 case 'ImGemini':
                     cameraPipe.send('ImGemini')
                     if cameraPipe.poll(0.1):
                         image = cameraPipe.recv()
                         res = gem.image_info(promt,image)
-                        for chank in res:
+                        async for chank in res:
                             print(chank)
                             audioPipe.send(chank)
                 case _:

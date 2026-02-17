@@ -13,8 +13,8 @@ class audioPlayer():
                 audio = queue.get()
                 if audio:
                     try:
-                        stereo_samples = np.column_stack((audio.samples, audio.samples))
-                        sd.play(stereo_samples,samplerate=audio.sample_rate)
+
+                        sd.play(audio.samples,samplerate=audio.sample_rate)
                         sd.wait()
                     except Exception as e:
                         print(e)
