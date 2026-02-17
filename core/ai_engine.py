@@ -17,6 +17,7 @@ class AiEngine():
             raise ValueError("need api key!!!")
         self.client = genai.Client(api_key=self.api_key)
     def image_info(self,promt,image = None):
+#==КРИТЕРИИ РАЗДЕЛЕНИЯ==
         stopSignal = ('.', '!', '?', '\n')
         buffer = ''
         content = []
@@ -33,6 +34,7 @@ class AiEngine():
 
             )
         )
+#==ОТПРАВКА ОТВЕТА ПО КУСОЧКАМ==
         for fraze in response:
             if fraze.text:
                 text_part = fraze.text
