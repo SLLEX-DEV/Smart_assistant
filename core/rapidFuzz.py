@@ -4,17 +4,20 @@ import scripts1
 class Wordcompair():
     def __init__(self):
         self.module = scripts1
+#==КОМАНДЫ ДЛЯ ЗРЕНИЯ==
         self.vision_cmd = [
             'опиши',
             "посмотри",
             'изображение',
             ' описание',
         ]
+#== СТАНДАРТНЫЕ КОМАНДЫ БЕЗ gemini==
         self.std_cmd = {
             'сколько времени': 'get_time',
             'какое число': 'get_data',
             'какой сегодня день недели': 'get_day'
         }
+#==АЛГОРИТМ ОПРЕДЕЛЕНИЯ ТИПА ЗАПРОСА==
     def wordAnalize(self,text):
         words = text.lower().split()
         if not words :
