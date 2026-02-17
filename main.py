@@ -11,11 +11,13 @@ from multiprocessing import Process,Pipe
 from collections import deque
 from core.rapidFuzz import Wordcompair
 import queue
+# ==ОБРАБОТКА И ОТПРАВКА SHERPA+AUDIOPLAYER==
 def ttsManager(pipe):
     sherpa = tts()
     audioPlay = audioPlayer(4)
 
     sherpa.initializate()
+#==ОЧЕРЕДЬ ДЛЯ АУДИО==
     audioQueue = queue.Queue()
 
     audioPlay.loopStart(audioQueue)
@@ -23,6 +25,7 @@ def ttsManager(pipe):
         if pipe.poll(0.1):
             fraze = pipe.recv()
             sherpa.generateAudio(fraze,audioQueue)
+#==БЕРЕТ КАДР ИЗ БУФЕРА ПРИ ЗАПРОСЕ==
 def cameraManager(pipe):
     cameraC = CameraController()
     cameraC.start()
@@ -34,14 +37,13 @@ def cameraManager(pipe):
                     pipe.send(cameraC.get_frame())
                 except Exception as e:
                     print(e)
-
+#==ОБРАБОТЧИК WW И ПРЕОБРАЗОВАТЕЛЬ  STT==
 def sttManager(pipe):
     audioDeq =  deque(maxlen=60)
     ww = wakeWord()
     audioM = AudioManager(2,audioDeq)
     VoiceL = Voice_listener()
     VoiceL.initialization()
-
     stat = 'waiting'
 
     audioM.start()
@@ -68,10 +70,11 @@ def sttManager(pipe):
 
 
 def main():
+#==СОЗДАНИЕ ТРУБ ДЛЯ ПРОЦЕССОВ==
     voskConn1,voskConn2 = Pipe()
     cameraConn1,cameraConn2 = Pipe()
     SGconn1,SGconn2 = Pipe()
-
+#==ИНИЦИАЛИЗАЦИЯ ПРОЦЕССОВ==
     processSttManager = Process(target = sttManager, args = (voskConn2,))
     processCameraManager = Process(target = cameraManager, args = (cameraConn2,))
     processGemini2Sherpa = Process(target=ttsManager,args=(SGconn2,))
@@ -79,10 +82,12 @@ def main():
     processSttManager.start()
     processCameraManager.start()
     processGemini2Sherpa.start()
+#==ЗАПУСК ГЛАВНОГО ЦИКЛА В asyncio==
     try:
         asyncio.run(mainloop(cameraConn1, voskConn1, SGconn1))
     except KeyboardInterrupt:
         print("\nЗавершение работы...")
+#==ОТКЛЮЧЕНИЕ ПРОЦЕССОВ ПРИ ЗАВЕРШЕНИИ РАБОТЫ==
     finally:
 
         processSttManager.terminate()
@@ -92,13 +97,14 @@ def main():
         processSttManager.join()
         processCameraManager.join()
         processGemini2Sherpa.join()
-
+#==ГЛАВНЫЙ ЦИКЛ ОБРАБОТКИ ДАННЫХ==
 async def mainloop(cameraPipe,voskPipe,audioPipe):
     gem = AiEngine()
     wordC = Wordcompair()
     task = ''
     while True:
         if voskPipe.poll(0.1):
+#==ОПРЕДЕЛЕНИЕ КАТЕГОРИИ ЗАПРОСА==
             text = voskPipe.recv()
             promt,task = wordC.wordAnalize(text)
             print(task)
