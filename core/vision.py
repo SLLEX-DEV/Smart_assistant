@@ -15,11 +15,12 @@ class CameraController:
         self.cap.set(cv2.CAP_PROP_FPS, 30)
         self.ret, self.frame = False, None
         self.stopped = False
+#==СОЗДАНИЕ ОТДЕЛЬНОГО ПОТОКА ДЛЯ КАМЕРЫ==
         t = threading.Thread(target=self._update, args=(), daemon=True)
         t.start()
         time.sleep(1.0)
         return self
-
+#==ЦИКЛ ЗАПОЛНЕНИЯ БУФЕРА КАДРАМИ==
     def _update(self):
         while not self.stopped:
             if not self.cap.isOpened():
@@ -30,7 +31,7 @@ class CameraController:
             if not self.ret:
                 print("Ошибка: не удалось получить кадр")
                 self.stopped = True
-
+#==БЕРЕМ ОДИН КАДР ИЗ БУФЕРА==
     def get_frame(self):
          if self.frame is None:
              return None
