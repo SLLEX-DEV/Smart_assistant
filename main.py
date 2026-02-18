@@ -121,6 +121,7 @@ async def mainloop(cameraPipe,voskPipe,audioPipe):
                     cameraPipe.send('ImGemini')
                     if cameraPipe.poll(0.1):
                         image = cameraPipe.recv()
+
                         res = gem.image_info(promt,image)
                         async for chank in res:
                             print(chank)
