@@ -3,6 +3,7 @@ import scripts1
 
 class Wordcompair():
     def __init__(self):
+
         self.module = scripts1
 #==КОМАНДЫ ДЛЯ ЗРЕНИЯ==
         self.vision_cmd = [

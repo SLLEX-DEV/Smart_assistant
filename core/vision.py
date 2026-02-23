@@ -29,7 +29,6 @@ class CameraController:
             self.ret, self.frame = self.cap.read()
 
             if not self.ret:
-                print("Ошибка: не удалось получить кадр")
                 self.stopped = True
 #==БЕРЕМ ОДИН КАДР ИЗ БУФЕРА==
     def get_frame(self):
@@ -44,7 +43,7 @@ class CameraController:
     def stop(self):
         self.stopped = True
         self.cap.release()
-        print("Камера остановлена")
+
 
 
 

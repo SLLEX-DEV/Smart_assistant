@@ -36,6 +36,6 @@ class AudioManager:
         if self.stream:
             self.stream.stop()
             self.stream.close()
-            print('stream offline')
+
 
 

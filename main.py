@@ -24,6 +24,9 @@ def ttsManager(pipe):
     while True:
         if pipe.poll(0.1):
             fraze = pipe.recv()
+            if fraze == 'stop':
+                audioPlay.errorStop()
+
             sherpa.generateAudio(fraze,audioQueue)
 #==БЕРЕТ КАДР ИЗ БУФЕРА ПРИ ЗАПРОСЕ==
 def cameraManager(pipe):
@@ -32,7 +35,9 @@ def cameraManager(pipe):
     while True:
         if pipe.poll(1):
             task = pipe.recv()
-            if task == 'ImGemini':
+            if task == 'stop':
+                cameraC.stop()
+            elif task == 'ImGemini':
                 try:
                     pipe.send(cameraC.get_frame())
                 except Exception as e:
@@ -46,9 +51,13 @@ def sttManager(pipe):
     VoiceL.initialization()
     stat = 'waiting'
 
+
     audioM.start()
 
     while True:
+        if pipe.poll(0.1):
+            if pipe.recv == 'stop':
+                audioM.stop()
         if len(audioDeq) > 0:
             char = audioDeq.popleft()
 
@@ -85,18 +94,9 @@ def main():
 #==ЗАПУСК ГЛАВНОГО ЦИКЛА В asyncio==
     try:
         asyncio.run(mainloop(cameraConn1, voskConn1, SGconn1))
-    except KeyboardInterrupt:
-        print("\nЗавершение работы...")
-#==ОТКЛЮЧЕНИЕ ПРОЦЕССОВ ПРИ ЗАВЕРШЕНИИ РАБОТЫ==
-    finally:
+    except Exception as e:
+        print(e)
 
-        processSttManager.terminate()
-        processCameraManager.terminate()
-        processGemini2Sherpa.terminate()
-
-        processSttManager.join()
-        processCameraManager.join()
-        processGemini2Sherpa.join()
 #==ГЛАВНЫЙ ЦИКЛ ОБРАБОТКИ ДАННЫХ==
 async def mainloop(cameraPipe,voskPipe,audioPipe):
     gem = AiEngine()
@@ -111,7 +111,9 @@ async def mainloop(cameraPipe,voskPipe,audioPipe):
             print(promt)
             match task:
                 case 'local':
-                    print(promt)
+                    if promt == 'stop':
+                        print('stop')
+                    audioPipe.send(promt)
                 case 'gemini':
                     print('2')
                     res = gem.image_info(promt)
