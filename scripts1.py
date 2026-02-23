@@ -1,8 +1,8 @@
 import time
-month = {
-    '01': 'января', '02': 'февраля', '03': 'марта', '04': 'апреля',
-    '05': 'мая', '06': 'июня', '07': 'июля', '08': 'августа',
-    '09': 'сентября', '10': 'октября', '11': 'ноября', '12': 'декабря'
+month_txt = {
+    1: 'января', 2: 'февраля',3: 'марта', 4: 'апреля',
+    5: 'мая', 6: 'июня', 7: 'июля', 8: 'августа',
+    9: 'сентября', 10: 'октября', 11: 'ноября', 12: 'декабря'
 }
 daysW= {
         'Monday': 'понедельник', 'Tuesday': 'вторник', 'Wednesday': 'среда',
@@ -72,12 +72,15 @@ def format_minutes(m):
         res += " минут"
     return res
 def get_time():
-    return time.strftime('%-H,%-M')
+    hours =  int(time.strftime('%H'))
+    minutes = format_minutes(int(time.strftime('%M')))
+    return  f'сейчас {h_txt[hours]} {minutes}'
 def get_data():
-    time.strftime('%d')
-    time.strftime('%m')
+    day = int(time.strftime('%d'))
+    month = int(time.strftime('%m'))
+    return f'сегодня {days_txt[day]} {month_txt[month]} '
 def get_day():
-    time.strftime('%A')
+    day = daysW[time.strftime('%A')]
+    return f'сегодня {day}'
 def stop():
     return 'stop'
-

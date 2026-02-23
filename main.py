@@ -1,4 +1,5 @@
 import asyncio
+from logging import shutdown
 
 from core.wake_word import wakeWord
 from core.audio_manager import AudioManager
@@ -26,7 +27,7 @@ def ttsManager(pipe):
             fraze = pipe.recv()
             if fraze == 'stop':
                 audioPlay.errorStop()
-
+                break
             sherpa.generateAudio(fraze,audioQueue)
 #==БЕРЕТ КАДР ИЗ БУФЕРА ПРИ ЗАПРОСЕ==
 def cameraManager(pipe):
@@ -56,7 +57,8 @@ def sttManager(pipe):
 
     while True:
         if pipe.poll(0.1):
-            if pipe.recv == 'stop':
+            shutDown = pipe.recv()
+            if shutDown == 'stop':
                 audioM.stop()
         if len(audioDeq) > 0:
             char = audioDeq.popleft()
@@ -69,6 +71,7 @@ def sttManager(pipe):
                 case "listening":
                     fraze = VoiceL.Getfraze(char.tobytes())
                     if fraze:
+                        print(fraze)
                         pipe.send(fraze)
                         stat = "waiting"
 
@@ -96,6 +99,14 @@ def main():
         asyncio.run(mainloop(cameraConn1, voskConn1, SGconn1))
     except Exception as e:
         print(e)
+    finally:
+        processSttManager.terminate()
+        processCameraManager.terminate()
+        processGemini2Sherpa.terminate()
+
+        processGemini2Sherpa.join()
+        processCameraManager.join()
+        processSttManager.join()
 
 #==ГЛАВНЫЙ ЦИКЛ ОБРАБОТКИ ДАННЫХ==
 async def mainloop(cameraPipe,voskPipe,audioPipe):
@@ -112,7 +123,10 @@ async def mainloop(cameraPipe,voskPipe,audioPipe):
             match task:
                 case 'local':
                     if promt == 'stop':
-                        print('stop')
+                        audioPipe.send('stop')
+                        cameraPipe.send('stop')
+                        voskPipe.send('stop')
+
                     audioPipe.send(promt)
                 case 'gemini':
                     print('2')
@@ -121,7 +135,7 @@ async def mainloop(cameraPipe,voskPipe,audioPipe):
                         audioPipe.send(chank)
                 case 'ImGemini':
                     cameraPipe.send('ImGemini')
-                    if cameraPipe.poll(0.1):
+                    if cameraPipe.poll(1):
                         image = cameraPipe.recv()
 
                         res = gem.image_info(promt,image)
