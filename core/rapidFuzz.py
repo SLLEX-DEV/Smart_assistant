@@ -16,13 +16,15 @@ class Wordcompair():
         self.std_cmd = {
             'сколько времени': 'get_time',
             'какое число': 'get_data',
-            'какой сегодня день недели': 'get_day'
+            'какой сегодня день недели': 'get_day',
+            'стоп': 'stop',
+            'тест':'niga'
         }
 #==АЛГОРИТМ ОПРЕДЕЛЕНИЯ ТИПА ЗАПРОСА==
     def wordAnalize(self,text):
         words = text.lower().split()
         if not words :
-            return None
+            return None,None
 
         vision_match = process.extractOne(
             ' '.join(words[:2]),

@@ -12,9 +12,14 @@ class audioPlayer():
         while True:
                 audio = queue.get()
                 if audio:
-                    try:
 
-                        sd.play(audio.samples,samplerate=audio.sample_rate)
+                    try:
+                        samples = audio.samples
+                        sr = audio.sample_rate
+                        silence_duration = 0.1
+                        silence = np.zeros(int(sr * silence_duration), dtype=np.float32)
+                        padded_audio = np.concatenate([samples, silence])
+                        sd.play(padded_audio,samplerate=sr)
                         sd.wait()
                     except Exception as e:
                         print(e)

@@ -8,7 +8,7 @@ import asyncio
 class AiEngine():
 
 
-    def __init__(self,model_name = 'gemini-2.0-flash-lite'):
+    def __init__(self,model_name = 'gemini-2.5-flash-lite'):
 
         self.model_name = model_name
         load_dotenv()

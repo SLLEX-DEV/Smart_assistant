@@ -1,5 +1,4 @@
 import asyncio
-from logging import shutdown
 
 from core.wake_word import wakeWord
 from core.audio_manager import AudioManager
@@ -38,6 +37,7 @@ def cameraManager(pipe):
             task = pipe.recv()
             if task == 'stop':
                 cameraC.stop()
+                break
             elif task == 'ImGemini':
                 try:
                     pipe.send(cameraC.get_frame())
@@ -56,10 +56,11 @@ def sttManager(pipe):
     audioM.start()
 
     while True:
-        if pipe.poll(0.1):
+        if pipe.poll():
             shutDown = pipe.recv()
             if shutDown == 'stop':
                 audioM.stop()
+                break
         if len(audioDeq) > 0:
             char = audioDeq.popleft()
 
@@ -118,6 +119,8 @@ async def mainloop(cameraPipe,voskPipe,audioPipe):
 #==ОПРЕДЕЛЕНИЕ КАТЕГОРИИ ЗАПРОСА==
             text = voskPipe.recv()
             promt,task = wordC.wordAnalize(text)
+            if task is  None:
+                continue
             print(task)
             print(promt)
             match task:
@@ -126,6 +129,7 @@ async def mainloop(cameraPipe,voskPipe,audioPipe):
                         audioPipe.send('stop')
                         cameraPipe.send('stop')
                         voskPipe.send('stop')
+                        return
 
                     audioPipe.send(promt)
                 case 'gemini':
