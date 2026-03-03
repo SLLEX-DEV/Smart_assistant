@@ -17,8 +17,7 @@ class Wordcompair():
             'сколько времени': 'get_time',
             'какое число': 'get_data',
             'какой сегодня день недели': 'get_day',
-            'стоп': 'stop',
-            'тест':'niga'
+            'стоп': 'stop'
         }
 #==АЛГОРИТМ ОПРЕДЕЛЕНИЯ ТИПА ЗАПРОСА==
     def wordAnalize(self,text):
